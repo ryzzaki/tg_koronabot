@@ -18,6 +18,8 @@ def send_welcome(message):
 
 @bot.message_handler(commands=['countries'])
 def list_countries(message):
+    print("[" + str(datetime.now()) + "] /countries by " +
+          message.from_user.username)
     r_countries = req.get('https://corona.lmao.ninja/countries').json()
     res_msg = "*Supported Countries*" + ("\n"*2)
     for country_obj in r_countries:
@@ -28,7 +30,7 @@ def list_countries(message):
 
 @bot.message_handler(commands=['corona'])
 def corona_stat(message):
-    print("[" + str(datetime.now()) + "] /start by " +
+    print("[" + str(datetime.now()) + "] /corona by " +
           message.from_user.username)
     command = str(message.text).split()
     if len(command) < 2:
