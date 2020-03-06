@@ -69,4 +69,4 @@ def corona_stat(message):
                     message, f"Not found... *{input_country}* is probably not a country. Try again.", parse_mode='Markdown')
 
 
-bot.polling(none_stop=True)
+bot.infinity_polling(True)
