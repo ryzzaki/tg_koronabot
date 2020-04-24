@@ -7,6 +7,7 @@ import requests as req
 import telebot
 import config
 from datetime import datetime
+import time
 
 bot = telebot.TeleBot(config.api_key)
 
@@ -23,7 +24,7 @@ def send_welcome(message):
 def list_countries(message):
     print("[" + str(datetime.now()) + "] /countries by " +
           message.from_user.username)
-    r_countries = req.get('https://corona.lmao.ninja/countries').json()
+    r_countries = req.get('https://corona.lmao.ninja/v2/countries').json()
     res_msg = "*Supported Countries* 🌎" + ("\n"*2)
     for country_obj in r_countries:
         res_msg = "\n" + res_msg + country_obj['country'] + "\n"
@@ -40,18 +41,19 @@ def corona_stat(message):
         bot.reply_to(
             message, "Missing argument. 🚫 Use */corona all* or */corona countryName*.", parse_mode='Markdown')
     else:
-        msg = str(message.text).split()
+        msg = str(message.text.lower()).split()
         msg.remove("/corona")
         input_country = " ".join(msg).strip()
         if input_country == "all":
-            r_all = req.get('https://corona.lmao.ninja/all').json()
+            r_all = req.get('https://corona.lmao.ninja/v2/all').json()
             res_msg = f"*Global Statistics* 🌐" + \
                 ("\n"*2) + f"🔴 *Total number of Cases:* {r_all['cases']}" + \
                 "\n" + f"💀 *Total number of Deaths:* {r_all['deaths']}" + \
                 "\n" + f"🎉 *Total number of Recovers:* {r_all['recovered']}"
             bot.send_message(message.chat.id, res_msg, parse_mode='Markdown')
         else:
-            r_countries = req.get('https://corona.lmao.ninja/countries').json()
+            r_countries = req.get(
+                'https://corona.lmao.ninja/v2/countries').json()
             flag = False
             for country_obj in r_countries:
                 if country_obj["country"].lower() == input_country.lower():
@@ -75,4 +77,9 @@ def corona_stat(message):
 
 if __name__ == "__main__":
     print("[" + str(datetime.now()) + "] Running...")
-    bot.infinity_polling(True)
+    while True:
+        try:
+            bot.infinity_polling(True)
+        except:
+            print('Restarting bot...')
+            time.sleep(5)
